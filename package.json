@@ -1,0 +1,11 @@
+{
+  "name": "related",
+  "version": "1.0.0",
+  "description": "A recommendation engine",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dan Roberts",
+  "license": "ISC"
+}
