@@ -76,9 +76,22 @@ app.post('/userData', (req, res, next) => {
   res.end(`${data.length}`);
 });
 
+// ================
+// === PUT PATH ===
+// ================
 
-// path to update video view count
+// This path handles requests from the History service
+app.put('/views', (req, res, next) => {
+  const { views } = req.body;
+  // { views: [{ videoID, additionalViews }, { videoID, additionalViews }, … ] }
 
+  console.log('respond to request...');
+  res.end(`${views.length}`);
+
+  // add the additional views to each of the view counts
+  console.log('incrementing view counts...');
+
+});
 
 
 app.listen(PORT, () => {
