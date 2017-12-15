@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+// include and use dotenv here!!
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -13,10 +15,9 @@ const PORT = process.env.PORT || 3000;
 // ================
 
 // This path handles requests from the Entry Point service
+// It receives a video ID and sends an array of video data for the top related videos
 app.get('/related:videoID', (req, res, next) => {
-  // Entry Server is looking for related videos to send to client
-
-  const videoID = req.params.videoID.slice(1);
+  const videoID = req.params.videoID.slice(1); // .slice(1) removes the leading colon :
 
   console.log('videoID', videoID);
 
@@ -24,17 +25,20 @@ app.get('/related:videoID', (req, res, next) => {
 
   // Output:
   // [{ videoID, title, views, thumbnail }]
-
   res.end(videoID);
 });
-
 
 // ==================
 // === POST PATHS ===
 // ==================
 
 // This path handles requests from the Videos service
+// It receives data for a video and stores that in the database,
+//   then it connects it to related videos with edges
 app.post('/update', (req, res, next) => {
+  // request body format:
+  //   { update, _id, title, description, tags, channelId, categoryId, topicCategories, thumbnailURL, publishedAt, duration }
+
   // get the video from the request body
   const video = req.body;
 
@@ -66,7 +70,10 @@ app.post('/update', (req, res, next) => {
 });
 
 // This path handles requests from the History service
+// It receives an array of video IDs, then it uses the ordering to create a 'video sequence' which will be represented in the database with edges
 app.post('/userData', (req, res, next) => {
+  // Request body format:
+  //  { data: [[ videoID, videoID, ...], [videoID, videoID, videoID, ...], … ] }
   const { data } = req.body;
 
   // update the edges between the relevent nodes with the order of the data as a sequence
@@ -82,17 +89,20 @@ app.post('/userData', (req, res, next) => {
 
 // This path handles requests from the History service
 app.put('/views', (req, res, next) => {
+  // request body format:
+  //   { views: [{ videoID, additionalViews }, { videoID, additionalViews }, … ] }
   const { views } = req.body;
-  // { views: [{ videoID, additionalViews }, { videoID, additionalViews }, … ] }
 
   console.log('respond to request...');
   res.end(`${views.length}`);
 
   // add the additional views to each of the view counts
   console.log('incrementing view counts...');
-
 });
 
+// ==============
+// === LISTEN ===
+// ==============
 
 app.listen(PORT, () => {
   console.log('listening on port:', PORT);
